@@ -109,13 +109,13 @@ public class CameraController : MonoBehaviour
         if (currentCamPos.x == currentPlayerPos.x && currentCamPos.y == currentPlayerPos.y)
         {
             // kamera se nehybe
-            currentLerpDistance = 1f;
+            currentLerpDistance = 1.0f;
             lastTargetPosition = currentCamPos;
             currentTargetPosition = currentCamPos;
             return;
         }
         // resetujeme lerping
-        currentLerpDistance = 0f;
+        currentLerpDistance = 0.0f;
         // uchovame pozici pro budouci lerping
         lastTargetPosition = currentCamPos;
         // uchovame novou pozici sledovaneho objektu

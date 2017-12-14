@@ -19,18 +19,29 @@ public class PlayerCollisionListener : MonoBehaviour
 				case "DeathTrigger"	:
 					targetStateListener.onStateChange(PlayerStateController.playerStates.kill);
 					break;
+				case "Boss" :
+					targetStateListener.onStateChange(PlayerStateController.playerStates.takingDMG);
+					break;
+				case "Enemy" :
+					targetStateListener.onStateChange(PlayerStateController.playerStates.takingDMG);
+					break;
+					
 		}
 	}
+	
+	
 	
 	private void OnTriggerExit2D(Collider2D collidedObj)
 	{
 		// v pripade zruseni kolize - padani napr.
 		switch (collidedObj.tag)
 		{
-				case "Platform":
+			case "Platform":
+			{
 					targetStateListener.onStateChange(PlayerStateController.playerStates.falling);
-					break;
-				
+				break;
+			}	
 		}
 	}
+
 }

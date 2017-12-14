@@ -10,7 +10,8 @@ public class BackgroundController : MonoBehaviour
 	
 	private Transform cameraTransform;
 	private Transform[] layers;
-	private float viewZone = 20;
+	[SerializeField]
+	private float viewZone = 9;
 	private int leftIndex, rightIndex;
 
 	private float lastCameraX;

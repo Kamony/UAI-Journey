@@ -10,6 +10,8 @@ public class PlayerStateController : MonoBehaviour
         jump,
         landing,
         falling,
+        takingDMG,
+        immortal,
         kill,
         resurrect,
         firingWeapon,

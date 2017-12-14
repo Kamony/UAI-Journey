@@ -19,11 +19,13 @@ public class PlayerScoreWatcher : MonoBehaviour
     private void OnEnable()
     {
         EnemyController.onEnemyDeath += addScore;
+        MathBossController.bossDeath += addScore;
     }
     // odhlasime se z odberu
     private void OnDisable()
     {
         EnemyController.onEnemyDeath -= addScore;
+        MathBossController.bossDeath -= addScore;
     }
     
     // metoda provedena v pripade prijeti zpravy o smrti nepritele

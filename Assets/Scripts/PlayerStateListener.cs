@@ -1,11 +1,15 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using Anima2D;
 using UnityEngine;
+using Debug = System.Diagnostics.Debug;
 
 
 [RequireComponent(typeof(Animator))]
 public class PlayerStateListener : MonoBehaviour {
     // upravitelne atributy pohybu hrace
+    public int playerHealth = 10;
     public float playerWalkSpeed = 3f;
     public float playerJumpForceVertical = 300f;
     public float playerJumpForceHorizontal = 250f;
@@ -21,12 +25,18 @@ public class PlayerStateListener : MonoBehaviour {
     private PlayerStateController.playerStates previousState = PlayerStateController.playerStates.idle;
     private PlayerStateController.playerStates currentState = PlayerStateController.playerStates.idle;
     private bool playerHasLanded = true;
+    private Rigidbody2D physics;
 
-
+    private  int PlayerHealthDefault;
     
     // delegat pro vyslani stavu smrti
     public delegate void playerDeadDelegate();
     public static event playerDeadDelegate onDeadAction;
+
+    public delegate void playerTakingDmgDelegate();
+    public static event playerTakingDmgDelegate OnTakingDmgAction;
+    
+    
     
     // prihlasime odber
     private void OnEnable()
@@ -41,18 +51,31 @@ public class PlayerStateListener : MonoBehaviour {
 
     private void Start()
     {
+        physics = GetComponent<Rigidbody2D>();
         // pristup ke komponente rizeni animaci
         playerAnimator = GetComponent<Animator>();
         // nastavime zacatecni prodlevu pro stavy
         PlayerStateController.stateDelayTimer[(int)PlayerStateController.playerStates.jump] = 1.0f;
         PlayerStateController.stateDelayTimer[(int)PlayerStateController.playerStates.firingWeapon] = 1.0f;
+
+        // uchovame nastavene zivoty
+        PlayerHealthDefault = playerHealth;
+       
     }
 
-    private void LateUpdate()
+
+    private void Update()
     {
         onStateCycle();
+        UnityEngine.Debug.Log(currentState);
     }
-    
+
+    private void FixedUpdate()
+    {
+        // nastavime animace dle vertikalni polohy
+        playerAnimator.SetFloat("vSpeed",physics.velocity.y);
+    }
+
     // !!! metodu jsem nahradil ve tride playerCollisionListener
     public void hitDeathTrigger()
     {
@@ -70,6 +93,7 @@ public class PlayerStateListener : MonoBehaviour {
         switch (currentState)
         {
             case PlayerStateController.playerStates.idle:
+                
                 break;
 
             case PlayerStateController.playerStates.left:
@@ -103,6 +127,17 @@ public class PlayerStateListener : MonoBehaviour {
 
             case PlayerStateController.playerStates.falling:
                 break;
+                
+            case PlayerStateController.playerStates.takingDMG:
+                if (playerHealth <= 0)
+                {
+                    onStateChange(PlayerStateController.playerStates.kill);
+                }
+                else
+                {
+                    onStateChange(PlayerStateController.playerStates.immortal);
+                }
+                break;
 
             case PlayerStateController.playerStates.kill:
                 //event - vysleme info o smrti hrace
@@ -113,6 +148,7 @@ public class PlayerStateListener : MonoBehaviour {
 
             case PlayerStateController.playerStates.resurrect:
                 onStateChange(PlayerStateController.playerStates.idle);
+             
                 break;
 
             case PlayerStateController.playerStates.firingWeapon:
@@ -142,6 +178,7 @@ public class PlayerStateListener : MonoBehaviour {
             // nastavime promenne ovladajici animace pohybu
             case PlayerStateController.playerStates.idle:
                 playerAnimator.SetBool("Walking", false);
+                playerAnimator.SetBool("Hurted", false);
                 break;
 
             case PlayerStateController.playerStates.left:
@@ -185,11 +222,19 @@ public class PlayerStateListener : MonoBehaviour {
                 playerAnimator.SetBool("Grounded",false);
                 PlayerStateController.stateDelayTimer[(int)PlayerStateController.playerStates.jump] = 0.0f;
                 break;
-
+            case PlayerStateController.playerStates.takingDMG:
+                playerAnimator.SetBool("Hurted", true);
+                playerHealth--;
+                break;
+            case PlayerStateController.playerStates.immortal:
+                PlayerStateController.stateDelayTimer[(int) PlayerStateController.playerStates.takingDMG] =
+                    Time.time + 0.5f;
+                break;
             case PlayerStateController.playerStates.kill:
                 break;
             // oziveni hrace na predem specifikovane pozici
             case PlayerStateController.playerStates.resurrect:
+                playerHealth = PlayerHealthDefault;
                 transform.position = playerRespawnPoint.transform.position;
                 transform.rotation = Quaternion.identity;
                 // vyresetujeme jeho pohyb
@@ -197,6 +242,7 @@ public class PlayerStateListener : MonoBehaviour {
                 break;
 
             case PlayerStateController.playerStates.firingWeapon:
+               playerAnimator.Play("PlayerFireAnim");
                 // Vytvor bullet object
                 GameObject newBullet = (GameObject)Instantiate(bulletPrefab);
 
@@ -288,7 +334,24 @@ public class PlayerStateListener : MonoBehaviour {
                 else
                     returnVal = false;
                 break;
-
+            case PlayerStateController.playerStates.takingDMG:
+                if (newState == PlayerStateController.playerStates.immortal ||
+                    newState == PlayerStateController.playerStates.kill)
+                {
+                    returnVal = true;
+                }
+                else 
+                    returnVal = false;
+                break;
+            case PlayerStateController.playerStates.immortal:
+                // vsechny stavy krome smrti mohou prevzit nesmrtelnost
+                if (newState == PlayerStateController.playerStates.idle)
+                {
+                    returnVal = true;
+                }
+                else
+                    returnVal = false;
+                break;
             case PlayerStateController.playerStates.kill:
                 // po smrti se muzeme jenom obzivit
                 if (newState == PlayerStateController.playerStates.resurrect)
@@ -340,7 +403,14 @@ public class PlayerStateListener : MonoBehaviour {
 
             case PlayerStateController.playerStates.falling:
                 break;
-
+            case PlayerStateController.playerStates.takingDMG:
+                if (PlayerStateController.stateDelayTimer[(int)PlayerStateController.playerStates.takingDMG] > Time.time)
+                {
+                    returnVal = true;
+                }
+                break;
+            case PlayerStateController.playerStates.immortal:
+                break;
             case PlayerStateController.playerStates.kill:
                 break;
 
