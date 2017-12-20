@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Anima2D;
 using UnityEngine;
-using Debug = System.Diagnostics.Debug;
+
 
 
 [RequireComponent(typeof(Animator))]
@@ -67,7 +67,7 @@ public class PlayerStateListener : MonoBehaviour {
     private void Update()
     {
         onStateCycle();
-        UnityEngine.Debug.Log(currentState);
+  
     }
 
     private void FixedUpdate()
@@ -242,7 +242,7 @@ public class PlayerStateListener : MonoBehaviour {
                 break;
 
             case PlayerStateController.playerStates.firingWeapon:
-               playerAnimator.Play("PlayerFireAnim");
+                playerAnimator.Play("PlayerFireAnim");
                 // Vytvor bullet object
                 GameObject newBullet = (GameObject)Instantiate(bulletPrefab);
 
@@ -261,7 +261,8 @@ public class PlayerStateListener : MonoBehaviour {
                 // zmenime stav na puvodni
                 onStateChange(currentState);
 
-                PlayerStateController.stateDelayTimer[(int)PlayerStateController.playerStates.firingWeapon] = Time.time + 0.25f;
+                PlayerStateController.stateDelayTimer[(int)PlayerStateController.playerStates.firingWeapon] = Time.time + 1f;
+                
                 break;
         }
 
