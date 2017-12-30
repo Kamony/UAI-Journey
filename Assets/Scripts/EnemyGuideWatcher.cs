@@ -7,6 +7,8 @@ public class EnemyGuideWatcher : MonoBehaviour
 	// enemy game object
 	public EnemyController enemyObj;
 
+	public float RaycastLength = 3;
+
 	private bool isColliding = false;
 	
 	// pokud watcher opusti platformu mel by se otocit, aby nespadl
@@ -27,7 +29,7 @@ public class EnemyGuideWatcher : MonoBehaviour
 	
 	}*/
 
-	private void OnTriggerEnter2D(Collider2D other)
+	/*private void OnTriggerEnter2D(Collider2D other)
 	{
 
 		if (other.tag == "Border")
@@ -42,10 +44,18 @@ public class EnemyGuideWatcher : MonoBehaviour
 			isColliding = true;
 
 		}
-	}
+	}*/
 
 	private void Update()
 	{
-		isColliding = false;
+//		Vector2 direction;
+//		direction = enemyObj.getWalkDirection() ? Vector2.left : Vector2.right;
+//		Debug.DrawRay(transform.position,direction,Color.red);
+//
+//		if (Physics2D.Raycast(transform.position,direction,RaycastLength).collider.CompareTag("Border"))
+//		{
+//			enemyObj.switchDirections();
+//		}
+//		isColliding = false;
 	}
 }

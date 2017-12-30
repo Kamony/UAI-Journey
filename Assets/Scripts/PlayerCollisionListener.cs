@@ -6,7 +6,12 @@ public class PlayerCollisionListener : MonoBehaviour
 {
 
 	public PlayerStateListener targetStateListener = null;
-
+	
+	
+	public delegate void SceneChange();
+	public static event SceneChange onSceneChange;
+	
+	
 	private void OnTriggerEnter2D(Collider2D collidedObj)
 	{
 		switch (collidedObj.tag)
@@ -24,6 +29,12 @@ public class PlayerCollisionListener : MonoBehaviour
 					break;
 				case "Enemy" :
 					targetStateListener.onStateChange(PlayerStateController.playerStates.takingDMG);
+					break;
+				case "Scene" :
+					if (onSceneChange != null)
+					{
+						onSceneChange();
+					}
 					break;
 					
 		}

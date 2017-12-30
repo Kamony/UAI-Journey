@@ -74,6 +74,11 @@ public class EnemyController : MonoBehaviour
 
 	private void Update()
 	{
+		if (Raycasting())
+		{
+			switchDirections();
+		}
+		
 		if (walkingLeft)
 			{
 				// pohyb vlevo
@@ -91,6 +96,19 @@ public class EnemyController : MonoBehaviour
 			transform.Find("haha").gameObject.SetActive(false);
 		}
 		
+	}
+	// metoda vysila paprsek z objektu a kontroluje kolizi s objektem Border
+	private bool Raycasting()
+	{
+		Vector3 direction;
+		if (walkingLeft)
+		{
+			direction = new Vector3(transform.position.x + 1,transform.position.y);	
+		} else direction = new Vector3(transform.position.x - 1,transform.position.y);
+		 
+		Debug.DrawLine(transform.position, direction);
+
+		return Physics2D.Linecast(transform.position, direction, 1 << LayerMask.NameToLayer("Border"));
 	}
 
 	// synchronizace spritu a smeru chuze - vizualni efekt
@@ -122,7 +140,5 @@ public class EnemyController : MonoBehaviour
 	{
 		walkingLeft = !walkingLeft;
 		updateWalkOrientation();
-	}
-	
-	
+	}	
 }

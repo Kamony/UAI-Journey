@@ -17,6 +17,7 @@ public class EnemyDamageListener : MonoBehaviour
             if (hitByBullet != null)
             {
                 hitByBullet();
+                GetComponentInParent<AudioSource>().Play();
             }
         }
     }
