@@ -8,7 +8,8 @@ public class EnemyRespawner : MonoBehaviour
 	public GameObject enemySpawn = null;
 	// jednotka casu ve vterinach po ktere se ma enemy respawnout
 	public float respawnDelay = 4.0f;
-	
+
+	public float chanceOfRespawn = 30;
 	
 	private float respawnTime = 0.0f;
 
@@ -26,7 +27,7 @@ public class EnemyRespawner : MonoBehaviour
 	// metoda naplanuje respawn objektu na zaklade nahodnosti
 	private void scheduleRespawn(int addscore)
 	{
-		if (Random.Range(0,10) < 5)
+		if (Random.Range(0,100) > chanceOfRespawn)
 		{
 			return;
 		}

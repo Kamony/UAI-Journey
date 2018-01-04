@@ -13,6 +13,8 @@ public class PlayerStateListener : MonoBehaviour {
     public float playerWalkSpeed = 3f;
     public float playerJumpForceVertical = 300f;
     public float playerJumpForceHorizontal = 250f;
+
+    public float fireDelay = 1f;
     // respawn point ktery se priradi v editoru
     public GameObject playerRespawnPoint = null;
     // bullet prefab ktery se priradi v editoru
@@ -183,14 +185,17 @@ public class PlayerStateListener : MonoBehaviour {
 
             case PlayerStateController.playerStates.left:
                 playerAnimator.SetBool("Walking", true);
+                playerAnimator.SetBool("Hurted", false);
                 break;
 
             case PlayerStateController.playerStates.right:
                 playerAnimator.SetBool("Walking", true);
+                playerAnimator.SetBool("Hurted", false);
                 break;
 
             case PlayerStateController.playerStates.jump:
                 playerAnimator.SetBool("Grounded",false);
+                playerAnimator.SetBool("Hurted", false);
                 if (playerHasLanded)
                 {
                     // nastavime jumpDirection podle tooh, jestli se skace doprava nebo doleva
@@ -214,12 +219,14 @@ public class PlayerStateListener : MonoBehaviour {
             // hrac pristal na zemi
             case PlayerStateController.playerStates.landing:
                 playerAnimator.SetBool("Grounded",true);
+                playerAnimator.SetBool("Hurted", false);
                 playerHasLanded = true;
                 PlayerStateController.stateDelayTimer[(int)PlayerStateController.playerStates.jump] = Time.time + 0.1f;
                 break;
             // hrac ve vzduchu
             case PlayerStateController.playerStates.falling:
                 playerAnimator.SetBool("Grounded",false);
+                playerAnimator.SetBool("Hurted", false);
                 PlayerStateController.stateDelayTimer[(int)PlayerStateController.playerStates.jump] = 0.0f;
                 break;
             case PlayerStateController.playerStates.takingDMG:
@@ -262,7 +269,7 @@ public class PlayerStateListener : MonoBehaviour {
                 // zmenime stav na puvodni
                 onStateChange(currentState);
 
-                PlayerStateController.stateDelayTimer[(int)PlayerStateController.playerStates.firingWeapon] = Time.time + 1f;
+                PlayerStateController.stateDelayTimer[(int)PlayerStateController.playerStates.firingWeapon] = Time.time + fireDelay;
                 
                 break;
         }
@@ -347,7 +354,13 @@ public class PlayerStateListener : MonoBehaviour {
                 break;
             case PlayerStateController.playerStates.immortal:
                 // vsechny stavy krome smrti mohou prevzit nesmrtelnost
-                if (newState == PlayerStateController.playerStates.idle)
+                if (newState == PlayerStateController.playerStates.idle
+                    || newState == PlayerStateController.playerStates.left
+                    || newState == PlayerStateController.playerStates.right
+                    || newState == PlayerStateController.playerStates.jump
+                    || newState == PlayerStateController.playerStates.falling
+                    || newState == PlayerStateController.playerStates.landing
+                    )
                 {
                     returnVal = true;
                 }

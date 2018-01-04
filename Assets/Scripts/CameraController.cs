@@ -9,7 +9,7 @@ public class CameraController : MonoBehaviour
     public float cameraTrackingSpeed = 0.2f;
     public float cameraYAdjustment = 3.0f;
     public float cameraXAdjustment = 3.0f;
-    
+    public float pixelToUnits = 16f;
     
     private PlayerStateController.playerStates currentPlayerState;
     private Vector3 lastTargetPosition = Vector3.zero;
@@ -114,6 +114,12 @@ public class CameraController : MonoBehaviour
             currentTargetPosition = currentCamPos;
             return;
         }
+        
+        float rounded_x = RoundToNearestPixel(currentPlayerPos.x);
+        float rounded_y = RoundToNearestPixel(currentPlayerPos.y);
+        
+        currentPlayerPos = new Vector3(rounded_x,rounded_y);
+        
         // resetujeme lerping
         currentLerpDistance = 0.0f;
         // uchovame pozici pro budouci lerping
@@ -126,6 +132,15 @@ public class CameraController : MonoBehaviour
         
     }
 
+    // jak se zda, tak pri praci s 2d musime zaokrouhlit pixely
+    public float RoundToNearestPixel(float unityUnits)
+    {
+        float valueInPixels = unityUnits * pixelToUnits;
+        valueInPixels = Mathf.Round(valueInPixels);
+        float roundedUnityUnits = valueInPixels * (1 / pixelToUnits);
+        return roundedUnityUnits;
+    }
+    
     private void stopTrackingPlayer()
     {
         Vector3 currentCamPos = transform.position;

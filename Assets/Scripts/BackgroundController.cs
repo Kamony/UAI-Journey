@@ -70,7 +70,7 @@ public class BackgroundController : MonoBehaviour
 		// updatujeme y souradnici, aby pozadi zustavalo v zornem poli kamery
 		for (int i = 0; i < transform.childCount; i++)
 		{
-			layers[i].position = new Vector3(layers[i].position.x,cameraTransform.position.y, 0);
+			layers[i].position = Vector3.Lerp(layers[i].position,cameraTransform.position, Time.deltaTime);
 		}
 	}
 
