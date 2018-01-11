@@ -9,7 +9,7 @@ using UnityEngine;
 [RequireComponent(typeof(Animator))]
 public class PlayerStateListener : MonoBehaviour {
     // upravitelne atributy pohybu hrace
-    public int playerHealth = 10;
+    public int playerHealth = 5;
     public float playerWalkSpeed = 3f;
     public float playerJumpForceVertical = 300f;
     public float playerJumpForceHorizontal = 250f;
@@ -35,7 +35,7 @@ public class PlayerStateListener : MonoBehaviour {
     public delegate void playerDeadDelegate();
     public static event playerDeadDelegate onDeadAction;
 
-    public delegate void playerTakingDmgDelegate();
+    public delegate void playerTakingDmgDelegate(int HealthRemaining);
     public static event playerTakingDmgDelegate OnTakingDmgAction;
     
     
@@ -232,6 +232,11 @@ public class PlayerStateListener : MonoBehaviour {
             case PlayerStateController.playerStates.takingDMG:
                 playerAnimator.SetBool("Hurted", true);
                 playerHealth--;
+                if (OnTakingDmgAction != null)
+                {
+                    OnTakingDmgAction(playerHealth);
+                }
+               
                 break;
             case PlayerStateController.playerStates.immortal:
                 PlayerStateController.stateDelayTimer[(int) PlayerStateController.playerStates.takingDMG] =
@@ -449,4 +454,8 @@ public class PlayerStateListener : MonoBehaviour {
         onStateChange(PlayerStateController.playerStates.kill);
     }
 
+    public int getHealth()
+    {
+        return playerHealth;
+    }
 }

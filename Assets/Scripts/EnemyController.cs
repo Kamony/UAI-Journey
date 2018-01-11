@@ -44,7 +44,7 @@ public class EnemyController : MonoBehaviour
 			onEnemyDeath(5);
 		}	
 		// znic objekt - enemy
-		Destroy(gameObject, 0.1f);
+		Destroy(gameObject);
 	}
 
 	private void OnDisable()

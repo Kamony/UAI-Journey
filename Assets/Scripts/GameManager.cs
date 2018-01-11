@@ -7,10 +7,8 @@ using UnityEngine.SceneManagement;
 // Singleton pro spravu scen
 public class GameManager : MonoBehaviour
 {
-
 	// uplatnime Singleton pristup, abychom zabranili duplikaci objektu ve hre
 	static GameManager Instance;
-
 	
 	private void OnEnable()
 	{

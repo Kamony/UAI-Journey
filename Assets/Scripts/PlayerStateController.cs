@@ -2,6 +2,7 @@
 
 public class PlayerStateController : MonoBehaviour
 {
+
     public enum playerStates
     {
         idle = 0,
@@ -25,21 +26,25 @@ public class PlayerStateController : MonoBehaviour
     public delegate void playerStateHandler(PlayerStateController.playerStates newState);
     public static event playerStateHandler onStateChange;
 
-    
-    
-    
-    void LateUpdate()
-    {
-        //if (!GameStates.gameActive)
-        //    return;
 
-        // detekuj defaultni input z Uniy a prirad ho do promenne
-        float horizontal = Input.GetAxis("Horizontal");
-        
-        // komunikujeme s ostatnimi tridami pomoci delegata aeventu onStateChange
-        if (horizontal != 0.0f)
+
+    public bool moveLeft = false;
+    public bool moveRight = false;
+    public bool jump = false;
+    public bool fire = false;
+
+
+    private void Awake()
+    {
+       
+    }
+
+    // komunikujeme s ostatnimi tridami pomoci delegata a eventu onStateChange
+    public void Move(float input = 0f)
+    {
+        if (input != 0.0f)
         {
-            if (horizontal < 0.0f)
+            if (input < 0.0f)
             {
                 if (onStateChange != null)
                     onStateChange(PlayerStateController.playerStates.left);
@@ -55,20 +60,42 @@ public class PlayerStateController : MonoBehaviour
             if (onStateChange != null)
                 onStateChange(PlayerStateController.playerStates.idle);
         }
-        // detekuj defaultni input z Uniy a prirad ho do promenne
-        float jump = Input.GetAxis("Jump");
-        if (jump > 0.0f)
+    }
+
+    public void Jump(float input = 0f)
+    {
+        if (input > 0.0f)
         {
             if (onStateChange != null)
                 onStateChange(PlayerStateController.playerStates.jump);
         }
-        // detekuj defaultni input z Uniy a prirad ho do promenne
-        float firing = Input.GetAxis("Fire1");
-        if (firing > 0.0f)
+    }
+
+    public void Fire(float input = 0f)
+    {
+        if (input > 0.0f)
         {
             if (onStateChange != null)
                 onStateChange(PlayerStateController.playerStates.firingWeapon);
         }
+    }
+
+    
+    
+    void LateUpdate()
+    {
+// pokud sme na desktopu, muzeme ovladat pohyb klavesnici
+#if UNITY_STANDALONE      
+        // detekuj defaultni input z Uniy a prirad ho do promenne
+        float horizontal = Input.GetAxis("Horizontal");
+        float jump = Input.GetAxis("Jump");
+        float firing = Input.GetAxis("Fire1");
+#endif
+
+      Move(TouchInput.movement);
+      Jump(TouchInput.jump);
+      Fire(TouchInput.fire);
+        
     }
 }
 
