@@ -44,11 +44,18 @@ public class PlayerStateListener : MonoBehaviour {
     private void OnEnable()
     {
         PlayerStateController.onStateChange += onStateChange;
+        CheckPointController.onCheckpointChange += changeRessurectPoint;
+        MathBossController.onCameraTargetChange += resetPosition;
+        
     }
+
+ 
 
     private void OnDisable()
     {
         PlayerStateController.onStateChange -= onStateChange;
+        CheckPointController.onCheckpointChange -= changeRessurectPoint;
+        MathBossController.onCameraTargetChange -= resetPosition;
     }
 
     private void Start()
@@ -155,6 +162,7 @@ public class PlayerStateListener : MonoBehaviour {
 
             case PlayerStateController.playerStates.firingWeapon:
                 break;
+          
         }
     }
 
@@ -247,10 +255,9 @@ public class PlayerStateListener : MonoBehaviour {
             // oziveni hrace na predem specifikovane pozici
             case PlayerStateController.playerStates.resurrect:
                 playerHealth = PlayerHealthDefault;
-                transform.position = playerRespawnPoint.transform.position;
-                transform.rotation = Quaternion.identity;
-                // vyresetujeme jeho pohyb
-                GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+                
+                resetPosition();
+                
                 break;
 
             case PlayerStateController.playerStates.firingWeapon:
@@ -277,6 +284,7 @@ public class PlayerStateListener : MonoBehaviour {
                 PlayerStateController.stateDelayTimer[(int)PlayerStateController.playerStates.firingWeapon] = Time.time + fireDelay;
                 
                 break;
+            
         }
 
         // ulozime predchozi stav
@@ -406,9 +414,13 @@ public class PlayerStateListener : MonoBehaviour {
                 break;
 
             case PlayerStateController.playerStates.left:
+                if (PlayerStateController.stateDelayTimer[(int)PlayerStateController.playerStates.left] > Time.time)
+                    returnVal = true;
                 break;
 
             case PlayerStateController.playerStates.right:
+                if (PlayerStateController.stateDelayTimer[(int)PlayerStateController.playerStates.right] > Time.time)
+                    returnVal = true;
                 break;
              // mame prodlevu mezi skoky
             case PlayerStateController.playerStates.jump:
@@ -454,8 +466,25 @@ public class PlayerStateListener : MonoBehaviour {
         onStateChange(PlayerStateController.playerStates.kill);
     }
 
-    public int getHealth()
+    private void changeRessurectPoint(GameObject newposition)
     {
-        return playerHealth;
+        playerRespawnPoint = newposition;
+    }
+    
+    private void resetPosition()
+    {
+        transform.position = playerRespawnPoint.transform.position;
+        transform.rotation = Quaternion.identity;
+        // vyresetujeme jeho pohyb
+        GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+        setInactiveForSeconds(2);
+    }
+
+    private void setInactiveForSeconds(float sec)
+    {
+        for (int i = 0; i < PlayerStateController.stateDelayTimer.Length; i++)
+        {
+            PlayerStateController.stateDelayTimer[i] = Time.time + sec;
+        } 
     }
 }

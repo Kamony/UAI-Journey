@@ -59,17 +59,6 @@ public class CameraController : MonoBehaviour
         // mirne posuneme kameru nahoru pro prirozenejsi vzhled ve hre
         currentTargetPosition.y += cameraYAdjustment;
 
-
-//        if (currentTargetPosition.x < transform.position.x)
-//        {
-//            currentTargetPosition.x += cameraXAdjustment; 
-//        }
-//        else
-//        {
-//            currentTargetPosition.x -= cameraXAdjustment;
-//        }
-        
-        
         transform.position = Vector3.Lerp(lastTargetPosition, currentTargetPosition, currentLerpDistance);
     }
 
@@ -115,11 +104,11 @@ public class CameraController : MonoBehaviour
             return;
         }
         
-        float rounded_x = RoundToNearestPixel(currentPlayerPos.x);
-        float rounded_y = RoundToNearestPixel(currentPlayerPos.y);
-        
-        currentPlayerPos = new Vector3(rounded_x,rounded_y);
-        
+//        float rounded_x = RoundToNearestPixel(currentPlayerPos.x);
+//        float rounded_y = RoundToNearestPixel(currentPlayerPos.y);
+//        
+//        currentPlayerPos = new Vector3(rounded_x,rounded_y);
+        currentPlayerPos = new Vector3(currentPlayerPos.x,currentPlayerPos.y);
         // resetujeme lerping
         currentLerpDistance = 0.0f;
         // uchovame pozici pro budouci lerping

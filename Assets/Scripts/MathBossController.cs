@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityStandardAssets._2D;
 
 public class MathBossController : MonoBehaviour
 {
@@ -9,7 +10,17 @@ public class MathBossController : MonoBehaviour
 	public delegate void bossEventHadnler(int score);
 
 	public static event bossEventHadnler bossDeath;
+	
+	public delegate void CameraTargerChange();
 
+	public static event CameraTargerChange onCameraTargetChange;
+
+	
+	private Camera2DFollow bossCameraTarget;
+	private Transform currTargetTransform;
+	private float numberOfTriggers = 0f;
+	
+	
 	public GameObject inActiveNode = null;
 	public GameObject dropToStartNode = null;
 	public GameObject dropFXSpawnPoint = null;
@@ -68,7 +79,9 @@ public class MathBossController : MonoBehaviour
 		animController = GetComponent<Animator>();
 
 		healthBar = FindObjectOfType<Slider>();
-		
+		bossCameraTarget=Camera.main.GetComponent<Camera2DFollow>();
+		currTargetTransform = bossCameraTarget.target;
+
 	}
 
 	private void Start()
@@ -160,6 +173,7 @@ public class MathBossController : MonoBehaviour
 				break;
 			case bossEvents.waitingToJump:
 			{
+				
 				if (timeForNextEvent == 0.0f)
 				{
 					timeForNextEvent = Time.time + eventWaitDelay;
@@ -200,6 +214,12 @@ public class MathBossController : MonoBehaviour
 
 	public void beginBossBattle()
 	{
+		if (onCameraTargetChange != null)
+		{
+			onCameraTargetChange();
+		}
+		
+		bossCameraTarget.target = this.transform;
 		targetNode = dropToStartNode;
 		CurrEvent = bossEvents.fallingToNode;
 
@@ -228,6 +248,19 @@ public class MathBossController : MonoBehaviour
 		if (other.CompareTag("PlayerBullet"))
 		{
 			hitByPlayerBullet();
+		}
+		if (other.CompareTag("SpecialTrigger"))
+		{
+			
+		}
+		
+	}
+
+	private void OnTriggerExit2D(Collider2D other)
+	{
+		if (other.CompareTag("SpecialTrigger"))
+		{
+			bossCameraTarget.target = currTargetTransform;			
 		}
 	}
 }

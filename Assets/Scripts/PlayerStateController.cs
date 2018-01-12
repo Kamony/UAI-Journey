@@ -26,19 +26,6 @@ public class PlayerStateController : MonoBehaviour
     public delegate void playerStateHandler(PlayerStateController.playerStates newState);
     public static event playerStateHandler onStateChange;
 
-
-
-    public bool moveLeft = false;
-    public bool moveRight = false;
-    public bool jump = false;
-    public bool fire = false;
-
-
-    private void Awake()
-    {
-       
-    }
-
     // komunikujeme s ostatnimi tridami pomoci delegata a eventu onStateChange
     public void Move(float input = 0f)
     {
@@ -85,16 +72,23 @@ public class PlayerStateController : MonoBehaviour
     void LateUpdate()
     {
 // pokud sme na desktopu, muzeme ovladat pohyb klavesnici
-#if UNITY_STANDALONE      
-        // detekuj defaultni input z Uniy a prirad ho do promenne
-        float horizontal = Input.GetAxis("Horizontal");
-        float jump = Input.GetAxis("Jump");
-        float firing = Input.GetAxis("Fire1");
-#endif
+
 
       Move(TouchInput.movement);
       Jump(TouchInput.jump);
       Fire(TouchInput.fire);
+        
+        
+#if UNITY_EDITOR   
+        // detekuj defaultni input z Uniy a prirad ho do promenne
+        float horizontal = Input.GetAxis("Horizontal");
+        float jump = Input.GetAxis("Jump");
+        float firing = Input.GetAxis("Fire1");
+    
+        Move(horizontal);
+        Jump(jump);
+        Fire(firing);
+#endif
         
     }
 }
