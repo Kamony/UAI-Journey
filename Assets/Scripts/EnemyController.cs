@@ -42,7 +42,9 @@ public class EnemyController : MonoBehaviour
 		if (onEnemyDeath != null)
 		{
 			onEnemyDeath(5);
-		}	
+		}
+		// promenna uchovavajici dosavadni stav zabitych nepratel
+		GameManager.Instance.numberOfEnemiesDestroyed += 1;
 		// znic objekt - enemy
 		Destroy(gameObject);
 	}

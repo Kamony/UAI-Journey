@@ -34,28 +34,37 @@ public class PlayerStateListener : MonoBehaviour {
     // delegat pro vyslani stavu smrti
     public delegate void playerDeadDelegate();
     public static event playerDeadDelegate onDeadAction;
-
+    
+    // delegat pro poskozeni
     public delegate void playerTakingDmgDelegate(int HealthRemaining);
     public static event playerTakingDmgDelegate OnTakingDmgAction;
-    
-    
-    
+
     // prihlasime odber
     private void OnEnable()
     {
         PlayerStateController.onStateChange += onStateChange;
         CheckPointController.onCheckpointChange += changeRessurectPoint;
         MathBossController.onCameraTargetChange += resetPosition;
+        GameManager.onLoadAttempt += OnLoadAttempt;
+    }
+
+    private void OnLoadAttempt(DataStructure ds)
+    {
+        Vector3 pos = new Vector3(ds.playerPosX,ds.playerPosY);
+        this.transform.position = pos;
+        this.playerHealth = ds.health;
+        PlayerScoreWatcher.score = ds.score;
+        PlayerScoreWatcher.health = playerHealth;
         
     }
 
- 
 
     private void OnDisable()
     {
         PlayerStateController.onStateChange -= onStateChange;
         CheckPointController.onCheckpointChange -= changeRessurectPoint;
         MathBossController.onCameraTargetChange -= resetPosition;
+        GameManager.onLoadAttempt -= OnLoadAttempt;
     }
 
     private void Start()
@@ -255,7 +264,7 @@ public class PlayerStateListener : MonoBehaviour {
             // oziveni hrace na predem specifikovane pozici
             case PlayerStateController.playerStates.resurrect:
                 playerHealth = PlayerHealthDefault;
-                
+                playerAnimator.SetBool("Hurted", true);
                 resetPosition();
                 
                 break;

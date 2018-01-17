@@ -73,18 +73,29 @@ public class PlayerStateController : MonoBehaviour
     {
 // pokud sme na desktopu, muzeme ovladat pohyb klavesnici
 
-
-      Move(TouchInput.movement);
-      Jump(TouchInput.jump);
-      Fire(TouchInput.fire);
-        
-        
-#if UNITY_EDITOR   
+#if UNITY_ANDROID
+        Move(TouchInput.movement);
+        Jump(TouchInput.jump);
+        Fire(TouchInput.fire);   
+#endif
+     
+#if UNITY_STANDALONE
         // detekuj defaultni input z Uniy a prirad ho do promenne
         float horizontal = Input.GetAxis("Horizontal");
         float jump = Input.GetAxis("Jump");
         float firing = Input.GetAxis("Fire1");
-    
+
+        Move(horizontal);
+        Jump(jump);
+        Fire(firing);
+#endif
+     
+#if UNITY_EDITOR
+// detekuj defaultni input z Uniy a prirad ho do promenne
+        float horizontal = Input.GetAxis("Horizontal");
+        float jump = Input.GetAxis("Jump");
+        float firing = Input.GetAxis("Fire1");
+
         Move(horizontal);
         Jump(jump);
         Fire(firing);

@@ -5,8 +5,10 @@ using UnityEngine;
 
 public class PlayerScoreWatcher : MonoBehaviour
 {
-    // hracovo skore
-    private int score = 0;
+    // hracovo skore a zivoty - 
+    public static int score = 0;
+    public static int health = 10;
+    
     
     public TextMeshProUGUI Health;
     public TextMeshProUGUI Score;
@@ -17,15 +19,17 @@ public class PlayerScoreWatcher : MonoBehaviour
         EnemyController.onEnemyDeath += addScore;
         MathBossController.bossDeath += addScore;
         PlayerStateListener.OnTakingDmgAction += TakeDmg;
+        GameManager.onLoadAttempt += updateStats;
         Debug.Log("Score ENABLED");
     }
-    
-   // odhlasime se z odberu
+
+    // odhlasime se z odberu
     private void OnDisable()
     {
         EnemyController.onEnemyDeath -= addScore;
         MathBossController.bossDeath -= addScore;
         PlayerStateListener.OnTakingDmgAction -= TakeDmg;
+        GameManager.onLoadAttempt -= updateStats;
         Debug.Log("Score DISABLED");
     }
 
@@ -37,8 +41,20 @@ public class PlayerScoreWatcher : MonoBehaviour
         Score.text = score.ToString();
     }
     
+    // metoda volana v pripade obdrzeni dmg
     private void TakeDmg(int healthRemaining)
     {
         Health.text = healthRemaining.ToString();
+        health = healthRemaining;
     }
+    
+    private void updateStats(DataStructure ds)
+    {
+        score = ds.score;
+        health = ds.health;
+        
+        Score.text = score.ToString();
+        Health.text = health.ToString();
+    }
+  
 }
