@@ -51,10 +51,8 @@ public class EnemyController : MonoBehaviour
 			{
 				onEnemyDeath(5);
 			}
-			// promenna uchovavajici dosavadni stav zabitych nepratel
-			GameManager.Instance.numberOfEnemiesDestroyed += 1;
-			// znic objekt - enemy
-			Destroy(gameObject);
+			StartCoroutine(death());
+
 		}
 		foreach (SpriteMeshInstance render in BodyRenders)
 		{
@@ -63,7 +61,17 @@ public class EnemyController : MonoBehaviour
 		walkingSpeed = walkingSpeed * 0.5f;
 
 	}
-
+	
+	// znic objekt - enemy
+	private IEnumerator death()
+	{
+		enemyAnimator.SetTrigger("Death");
+		yield return new WaitForSeconds(0.5f);
+		// promenna uchovavajici dosavadni stav zabitych nepratel
+		GameManager.Instance.numberOfEnemiesDestroyed += 1;
+		Destroy(gameObject);
+	}
+	
 	private void OnDisable()
 	{
 		PlayerStateListener.onDeadAction -= playerMockery;

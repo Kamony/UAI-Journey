@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Anima2D;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 
 
 [RequireComponent(typeof(Animator))]
@@ -50,6 +50,7 @@ public class PlayerStateListener : MonoBehaviour {
         PlayerStateController.onStateChange += onStateChange;
         CheckPointController.onCheckpointChange += changeRessurectPoint;
         MathBossController.onCameraTargetChange += resetPosition;
+        EnemyDamageListener.onHitAction += tossBodyAway;
         GameManager.onLoadAttempt += OnLoadAttempt;
     }
 
@@ -70,12 +71,30 @@ public class PlayerStateListener : MonoBehaviour {
         PlayerStateController.onStateChange -= onStateChange;
         CheckPointController.onCheckpointChange -= changeRessurectPoint;
         MathBossController.onCameraTargetChange -= resetPosition;
+        EnemyDamageListener.onHitAction -= tossBodyAway;
         GameManager.onLoadAttempt -= OnLoadAttempt;
+    }
+
+    private void tossBodyAway(int direction)
+    {
+        Vector2 force;
+        if (direction > 0.0f)
+        {
+            force = Vector2.left*10;
+        }
+        else
+        {
+            force = Vector2.right*10;
+        }
+        physics.AddForce(force,ForceMode2D.Impulse);
+        Debug.Log("Tossing");
     }
 
     private void Start()
     {
         physics = GetComponent<Rigidbody2D>();
+        // vyresetujeme pohyb
+        physics.velocity = Vector2.zero;
         // pristup ke komponente rizeni animaci
         playerAnimator = GetComponent<Animator>();
         // nastavime zacatecni prodlevu pro stavy
@@ -254,6 +273,12 @@ public class PlayerStateListener : MonoBehaviour {
                 PlayerStateController.stateDelayTimer[(int)PlayerStateController.playerStates.jump] = 0.0f;
                 break;
             case PlayerStateController.playerStates.takingDMG:
+#if UNITY_ANDROID
+                if (GameManager.Instance.vibrationEnabled)
+                {
+                    Handheld.Vibrate();
+                }        
+#endif
                 playerAnimator.SetBool("Hurted", true);
                 playerHealth--;
                 if (OnTakingDmgAction != null)

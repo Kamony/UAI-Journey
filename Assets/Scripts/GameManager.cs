@@ -30,6 +30,7 @@ public class GameManager : MonoBehaviour
 	public static SaveGameStats onLoadAttempt;
 
 	public DataStructure ds;
+	public bool vibrationEnabled = true;
 
 	private void Awake()
 	{
@@ -63,7 +64,7 @@ public class GameManager : MonoBehaviour
 
 	private void OnApplicationQuit()
 	{
-	
+		SaveGame();
 	}
 
 	private void initPlayer(Scene arg0, LoadSceneMode arg1)
@@ -103,6 +104,7 @@ public class GameManager : MonoBehaviour
 	// nahraje dalsi level a ulozi si data
 	private void LoadNextLevel()
 	{
+		TouchInput.SetActive(false);
 		PreserveData();
 		StartCoroutine(loadAsynchronously(SceneManager.GetActiveScene().buildIndex + 1));
 	}
@@ -117,15 +119,20 @@ public class GameManager : MonoBehaviour
 	// ulozime data do vytvorene tridy pro serializaci
 	public void PreserveData()
 	{
-		ds.score = PlayerScoreWatcher.score;
-		ds.health = PlayerScoreWatcher.health;
-		ds.sceneNo = SceneManager.GetActiveScene().buildIndex;
-		Transform playerPos = FindObjectOfType<PlayerStateListener>().playerRespawnPoint.transform;
-		ds.playerPosX = playerPos.position.x;
-		ds.playerPosY = playerPos.position.y;
-		ds.numberOfDestroyedEnemies = numberOfEnemiesDestroyed;
-
-		isSaved = true;
+		int scene = SceneManager.GetActiveScene().buildIndex;
+		// nechci ukladat v hlavnim menu
+		if (scene > 0)
+		{
+			ds.score = PlayerScoreWatcher.score;
+			ds.health = PlayerScoreWatcher.health;
+			ds.sceneNo = scene;
+			Transform playerPos = FindObjectOfType<PlayerStateListener>().playerRespawnPoint.transform;
+			ds.playerPosX = playerPos.position.x;
+			ds.playerPosY = playerPos.position.y;
+			ds.numberOfDestroyedEnemies = numberOfEnemiesDestroyed;
+			isSaved = true;
+		}
+		isSaved = false;
 	}
 	
 	// ulozime hru do souboru
@@ -135,11 +142,12 @@ public class GameManager : MonoBehaviour
 		FileStream file = File.Create(Application.persistentDataPath + "/gameSave.dat");
 		
 		PreserveData();
+		if (isSaved)
+		{
+			bf.Serialize(file,ds);
+		}
 		
-		bf.Serialize(file,ds);
 		file.Close();
-
-		isSaved = true;
 	}
 
 
@@ -153,7 +161,7 @@ public class GameManager : MonoBehaviour
 	// asynchrone nahraje dalsi level, v pripade volani z hlavniho menu  - level 1
 	public void LoadGame()
 	{
-		
+		TouchInput.SetActive(false);
 		StartCoroutine(loadAsynchronously(SceneManager.GetActiveScene().buildIndex + 1));
 
 	}
