@@ -35,7 +35,7 @@ public class MainMenu : MonoBehaviour
 	// novy level volame na pozadi
 	public void loadLevel()
 	{
-		FindObjectOfType<GameManager>().LoadGame();
+		_gm.LoadGame();
 	}
     
 	// ukonceni hry

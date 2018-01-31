@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -28,7 +29,7 @@ public class GameManager : MonoBehaviour
 	public delegate void SaveGameStats(DataStructure ds);
 	public static SaveGameStats onLoadAttempt;
 
-	private DataStructure ds;
+	public DataStructure ds;
 
 	private void Awake()
 	{
@@ -40,6 +41,7 @@ public class GameManager : MonoBehaviour
 	{
 		PlayerCollisionListener.onSceneChange += LoadNextLevel;
 		SceneManager.sceneLoaded += initPlayer;
+		PlayerStateListener.onDeadAction += PreserveData;
 	}
 
 
@@ -47,23 +49,29 @@ public class GameManager : MonoBehaviour
 	{
 		PlayerCollisionListener.onSceneChange -= LoadNextLevel;
 		SceneManager.sceneLoaded -= initPlayer;
+		PlayerStateListener.onDeadAction -= PreserveData;
 	}
 
 	private void OnApplicationPause(bool pauseStatus)
 	{
-		SaveGame();
+		if (pauseStatus)
+		{
+			SaveGame();
+			//SaveAsync();
+		}
 	}
 
 	private void OnApplicationQuit()
 	{
-		SaveGame();
+	
 	}
 
 	private void initPlayer(Scene arg0, LoadSceneMode arg1)
 	{
+		loadingScreen.SetActive(false);		
 		if (arg0.buildIndex > 0 && arg0.isLoaded)
 		{
-			loadingScreen.SetActive(false);
+			
 			TouchInput.SetActive(true);
 			
 			if (resumePressed)
@@ -134,11 +142,18 @@ public class GameManager : MonoBehaviour
 		isSaved = true;
 	}
 
+
+	public void SaveAsync()
+	{
+		Thread thread = new Thread(SaveGame);
+		thread.Start();
+		
+	}
 	
 	// asynchrone nahraje dalsi level, v pripade volani z hlavniho menu  - level 1
 	public void LoadGame()
 	{
-		loadingScreen.SetActive(true);
+		
 		StartCoroutine(loadAsynchronously(SceneManager.GetActiveScene().buildIndex + 1));
 
 	}
@@ -146,11 +161,13 @@ public class GameManager : MonoBehaviour
 	// asynchronni volani sceny a update slideru pro visualni efekt
 	IEnumerator loadAsynchronously(int sceneNumber)
 	{
+		loadingScreen.SetActive(true);
 		AsyncOperation operation = SceneManager.LoadSceneAsync(sceneNumber);
 		
 		while (!operation.isDone)
 		{
 			float progress = Mathf.Clamp01(operation.progress / 0.9f);
+			Debug.Log(progress);
 			slider.value = progress;
 			yield return null;
 		}
@@ -199,8 +216,8 @@ public class DataStructure
 	public float playerPosX;
 	public float playerPosY;
 	public int sceneNo;
-	public int score;
-	public int health;
+	public int score = 0;
+	public int health = 5;
 	public int numberOfDestroyedEnemies;
-	public string[] namesOfEnemies;
+	public int playerDefaultHealth = 5;
 }

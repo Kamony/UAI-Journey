@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class EnemyDamageListener : MonoBehaviour
 {
+    
+    
     // delegat registrujici zasah kulkou
+    
     public delegate void hitByPlayerBullet();
 
     public event hitByPlayerBullet hitByBullet;

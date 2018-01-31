@@ -1,10 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Anima2D;
 using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
 public class EnemyController : MonoBehaviour
 {
+	public float health = 2;
+	
 	// atributy pohybu
 	public float walkingSpeed = 0.45f;
 	// atributy posmechu
@@ -16,7 +19,8 @@ public class EnemyController : MonoBehaviour
 	private bool isMocking = false;
 	private Animator enemyAnimator = null;
 	private float time = 0;
-	
+
+	private SpriteMeshInstance[] BodyRenders;
 	// objekt registrujici zasah kulkou hrace 
 	public EnemyDamageListener bulletCollisionListener = null;
 	
@@ -28,6 +32,7 @@ public class EnemyController : MonoBehaviour
 	private void Awake()
 	{
 		enemyAnimator = GetComponent<Animator>();
+		BodyRenders = GetComponentsInChildren<SpriteMeshInstance>();
 	}
 
 	private void OnEnable()
@@ -38,15 +43,25 @@ public class EnemyController : MonoBehaviour
 
 	private void hitByPlayerBullet()
 	{
-		// aktualizuj event - score + 5;
-		if (onEnemyDeath != null)
+		health--;
+		if (health <=0)
 		{
-			onEnemyDeath(5);
+			// aktualizuj event - score + 5;
+			if (onEnemyDeath != null)
+			{
+				onEnemyDeath(5);
+			}
+			// promenna uchovavajici dosavadni stav zabitych nepratel
+			GameManager.Instance.numberOfEnemiesDestroyed += 1;
+			// znic objekt - enemy
+			Destroy(gameObject);
 		}
-		// promenna uchovavajici dosavadni stav zabitych nepratel
-		GameManager.Instance.numberOfEnemiesDestroyed += 1;
-		// znic objekt - enemy
-		Destroy(gameObject);
+		foreach (SpriteMeshInstance render in BodyRenders)
+		{
+			render.color = Color.Lerp(render.color,new Color(9,255,0),Time.deltaTime);
+		}
+		walkingSpeed = walkingSpeed * 0.5f;
+
 	}
 
 	private void OnDisable()

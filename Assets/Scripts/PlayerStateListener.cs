@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using Anima2D;
 using UnityEngine;
 
@@ -34,6 +35,10 @@ public class PlayerStateListener : MonoBehaviour {
     // delegat pro vyslani stavu smrti
     public delegate void playerDeadDelegate();
     public static event playerDeadDelegate onDeadAction;
+
+
+    public delegate void playerStatsDelegate(int health, int score);
+    public static event playerStatsDelegate onRessurectAction;
     
     // delegat pro poskozeni
     public delegate void playerTakingDmgDelegate(int HealthRemaining);
@@ -53,6 +58,7 @@ public class PlayerStateListener : MonoBehaviour {
         Vector3 pos = new Vector3(ds.playerPosX,ds.playerPosY);
         this.transform.position = pos;
         this.playerHealth = ds.health;
+        this.PlayerHealthDefault = ds.playerDefaultHealth;
         PlayerScoreWatcher.score = ds.score;
         PlayerScoreWatcher.health = playerHealth;
         
@@ -75,12 +81,13 @@ public class PlayerStateListener : MonoBehaviour {
         // nastavime zacatecni prodlevu pro stavy
         PlayerStateController.stateDelayTimer[(int)PlayerStateController.playerStates.jump] = 1.0f;
         PlayerStateController.stateDelayTimer[(int)PlayerStateController.playerStates.firingWeapon] = 1.0f;
-
-        // uchovame nastavene zivoty
-        PlayerHealthDefault = playerHealth;
-       
     }
 
+    private void Awake()
+    {
+        // uchovame nastavene zivoty
+        PlayerHealthDefault = playerHealth;
+    }
 
     private void Update()
     {
@@ -266,7 +273,8 @@ public class PlayerStateListener : MonoBehaviour {
                 playerHealth = PlayerHealthDefault;
                 playerAnimator.SetBool("Hurted", true);
                 resetPosition();
-                
+                if (onRessurectAction != null)
+                    onRessurectAction(playerHealth, -15);
                 break;
 
             case PlayerStateController.playerStates.firingWeapon:
