@@ -519,7 +519,7 @@ public class PlayerStateListener : MonoBehaviour {
         transform.rotation = Quaternion.identity;
         // vyresetujeme jeho pohyb
         GetComponent<Rigidbody2D>().velocity = Vector2.zero;
-        setInactiveForSeconds(2);
+        setInactiveForSeconds(1);
     }
 
     private void setInactiveForSeconds(float sec)

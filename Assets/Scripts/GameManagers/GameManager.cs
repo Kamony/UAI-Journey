@@ -24,14 +24,21 @@ public class GameManager : MonoBehaviour
 
 	public GameObject TouchInput;
 	public GameObject loadingScreen;
+	public GameObject endingScreen;
 	public Slider slider;
 	
 	public delegate void SaveGameStats(DataStructure ds);
 	public static SaveGameStats onLoadAttempt;
 
+	public delegate void NewGame();
+	public static NewGame newGame;
+	
+
 	public DataStructure ds;
 	public bool vibrationEnabled = true;
 
+	
+	
 	private void Awake()
 	{
 		ds = new DataStructure();
@@ -40,7 +47,7 @@ public class GameManager : MonoBehaviour
 
 	private void OnEnable()
 	{
-		PlayerCollisionListener.onSceneChange += LoadNextLevel;
+		PlayerCollisionListener.onSceneChange += showEndingScreen;
 		SceneManager.sceneLoaded += initPlayer;
 		PlayerStateListener.onDeadAction += PreserveData;
 	}
@@ -48,7 +55,7 @@ public class GameManager : MonoBehaviour
 
 	private void OnDisable()
 	{
-		PlayerCollisionListener.onSceneChange -= LoadNextLevel;
+		PlayerCollisionListener.onSceneChange -= showEndingScreen;
 		SceneManager.sceneLoaded -= initPlayer;
 		PlayerStateListener.onDeadAction -= PreserveData;
 	}
@@ -69,11 +76,15 @@ public class GameManager : MonoBehaviour
 
 	private void initPlayer(Scene arg0, LoadSceneMode arg1)
 	{
-		loadingScreen.SetActive(false);		
+		loadingScreen.SetActive(false);	
+		endingScreen.SetActive(false);
+		Time.timeScale = 1f;
+		
 		if (arg0.buildIndex > 0 && arg0.isLoaded)
 		{
 			
 			TouchInput.SetActive(true);
+			global::TouchInput.Input.resetMovement();
 			
 			if (resumePressed)
 			{
@@ -81,8 +92,10 @@ public class GameManager : MonoBehaviour
 				{
 					onLoadAttempt(ds);
 				}
+				resumePressed = false;
+				StartCoroutine(updateEnemyStateInGame());
 			}
-			StartCoroutine(updateEnemyStateInGame());
+		
 			return;
 		}
 		Debug.Log("Cannot be loaded");
@@ -100,11 +113,21 @@ public class GameManager : MonoBehaviour
 		}
 		
 	}
+
+	private void showEndingScreen()
+	{
+		Time.timeScale = 0f;
+		endingScreen.SetActive(true);
+		LevelEndScreenManager.Instance.setGUIStats();
+		LevelEndScreenManager.Instance.reset();
+	}
+	
 	
 	// nahraje dalsi level a ulozi si data
-	private void LoadNextLevel()
+	public void LoadNextLevel()
 	{
 		TouchInput.SetActive(false);
+		endingScreen.SetActive(false);
 		PreserveData();
 		StartCoroutine(loadAsynchronously(SceneManager.GetActiveScene().buildIndex + 1));
 	}
@@ -123,14 +146,17 @@ public class GameManager : MonoBehaviour
 		// nechci ukladat v hlavnim menu
 		if (scene > 0)
 		{
+			PlayerStateListener player = FindObjectOfType<PlayerStateListener>();
+			
 			ds.score = PlayerScoreWatcher.score;
-			ds.health = PlayerScoreWatcher.health;
+			ds.health = player.playerHealth;
 			ds.sceneNo = scene;
-			Transform playerPos = FindObjectOfType<PlayerStateListener>().playerRespawnPoint.transform;
+			Transform playerPos = player.playerRespawnPoint.transform;
 			ds.playerPosX = playerPos.position.x;
 			ds.playerPosY = playerPos.position.y;
 			ds.numberOfDestroyedEnemies = numberOfEnemiesDestroyed;
 			isSaved = true;
+			return;
 		}
 		isSaved = false;
 	}
@@ -139,15 +165,16 @@ public class GameManager : MonoBehaviour
 	public void SaveGame()
 	{
 		BinaryFormatter bf = new BinaryFormatter();
-		FileStream file = File.Create(Application.persistentDataPath + "/gameSave.dat");
 		
 		PreserveData();
 		if (isSaved)
 		{
+			FileStream file = File.Create(Application.persistentDataPath + "/gameSave.dat");
 			bf.Serialize(file,ds);
+			file.Close();
 		}
 		
-		file.Close();
+		
 	}
 
 
@@ -159,9 +186,15 @@ public class GameManager : MonoBehaviour
 	}
 	
 	// asynchrone nahraje dalsi level, v pripade volani z hlavniho menu  - level 1
-	public void LoadGame()
+	public void LoadNewGame()
 	{
 		TouchInput.SetActive(false);
+		// delegat vyhlasi stav nova hra
+		if (newGame != null)
+		{
+			newGame();
+		}
+		
 		StartCoroutine(loadAsynchronously(SceneManager.GetActiveScene().buildIndex + 1));
 
 	}

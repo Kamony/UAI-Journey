@@ -6,7 +6,7 @@ using UnityEngine;
 public class PlayerScoreWatcher : MonoBehaviour
 {
     // hracovo skore a zivoty - 
-    public static int score;
+    public static int score = 0;
     public static int health;
     
     
@@ -21,7 +21,14 @@ public class PlayerScoreWatcher : MonoBehaviour
         PlayerStateListener.OnTakingDmgAction += TakeDmg;
         PlayerStateListener.onRessurectAction += resetStats;
         GameManager.onLoadAttempt += updateStats;
+        GameManager.newGame += statsToDefault;
         Debug.Log("Score ENABLED");
+    }
+
+    private void statsToDefault()
+    {
+        score = 0;
+        Score.text = score.ToString();
     }
 
     // odhlasime se z odberu
@@ -32,6 +39,7 @@ public class PlayerScoreWatcher : MonoBehaviour
         PlayerStateListener.OnTakingDmgAction -= TakeDmg;
         PlayerStateListener.onRessurectAction -= resetStats;
         GameManager.onLoadAttempt -= updateStats;
+        GameManager.newGame -= statsToDefault;
         Debug.Log("Score DISABLED");
     }
 

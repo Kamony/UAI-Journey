@@ -29,6 +29,9 @@ public class MathBossController : MonoBehaviour
 	public GameObject bossDeathFX = null;
 	public GameObject bossDropFX = null;
 	public GameObject Canvas;
+
+
+	public GameObject portal = null;
 	
 	private Slider healthBar;
 
@@ -124,6 +127,8 @@ public class MathBossController : MonoBehaviour
 		{
 			bossDeath(1000);
 		}
+		portal.SetActive(true);
+		
 		Destroy(gameObject);
 		
 	}

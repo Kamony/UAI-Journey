@@ -1,5 +1,6 @@
 ﻿    
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class TouchInput : MonoBehaviour
 {
@@ -8,6 +9,24 @@ public class TouchInput : MonoBehaviour
     public static float movement = 0;
     public static float jump = 0;
     public static float fire = 0;
+
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += initReset;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= initReset; 
+    }
+
+    private void initReset(Scene arg0, LoadSceneMode arg1)
+    {
+        resetMovement();
+        resetJump();
+        resetFire();
+    }
 
     private void Awake()
     {

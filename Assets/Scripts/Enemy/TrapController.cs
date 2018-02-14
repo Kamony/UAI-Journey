@@ -14,18 +14,6 @@ public class TrapController : MonoBehaviour
 	private bool isFalling = false;
 
 
-
-	private void Awake()
-	{
-
-	//	sprite = GetComponentInChildren<Transform>();
-	}
-
-	private void Update()
-	{
-		sprite.Rotate(new Vector3(0,0,rotationAngle));
-	}
-
 	// Update is called once per frame
 	void FixedUpdate () {
 
