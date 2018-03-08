@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerScoreWatcher : MonoBehaviour
 {
     // hracovo skore a zivoty - 
     public static int score = 0;
     public static int health;
-    
+
+    public static PlayerScoreWatcher Instance;
     
     public TextMeshProUGUI Health;
     public TextMeshProUGUI Score;
@@ -20,6 +22,7 @@ public class PlayerScoreWatcher : MonoBehaviour
         MathBossController.bossDeath += addScore;
         PlayerStateListener.OnTakingDmgAction += TakeDmg;
         PlayerStateListener.onRessurectAction += resetStats;
+        
         GameManager.onLoadAttempt += updateStats;
         GameManager.newGame += statsToDefault;
         Debug.Log("Score ENABLED");
@@ -76,5 +79,15 @@ public class PlayerScoreWatcher : MonoBehaviour
         Score.text = score.ToString();
         Health.text = health.ToString();
     }
-  
+
+    public void resetHealth()
+    {
+        health = 5;
+        Health.text = health.ToString();
+    }
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 }

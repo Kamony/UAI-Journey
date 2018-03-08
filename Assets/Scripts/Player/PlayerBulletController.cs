@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class PlayerBulletController : MonoBehaviour
 {
-    public GameObject playerObject = null;
-    public float bulletSpeed = 15.0f;
+    [SerializeField] private GameObject playerObject = null;
+    public GameObject PlayerObject { set { playerObject = value; } }
+ 
+    [SerializeField] private float bulletSpeed = 15.0f;
     // ttl kulky :)
-    private float selfDestructTimer = 0.0f;
+    [SerializeField] private float selfDestructTimer = 0.0f;
     
     // vypal kulku
     public void launchBullet()

@@ -5,11 +5,27 @@ using UnityEngine.SceneManagement;
 public class TouchInput : MonoBehaviour
 {
     public static TouchInput Input;
-    
-    public static float movement = 0;
-    public static float jump = 0;
-    public static float fire = 0;
 
+    private float _movement = 0;
+    
+    public float Movement
+    {
+        get { return _movement; }
+    }
+
+    private float _jump = 0;
+
+    public float Jump
+    {
+        get { return _jump; }
+    }
+    
+    private float _fire = 0;
+
+    public float Fire
+    {
+        get { return _fire; }
+    }
 
     private void OnEnable()
     {
@@ -43,36 +59,36 @@ public class TouchInput : MonoBehaviour
     
     public void goLeft()
     {
-        movement = -1;
+        _movement = -1;
     }
 
     public void goRight()
     {
-        movement = 1;
+        _movement = 1;
     }
 
     public void resetMovement()
     {
-        movement = 0;
+        _movement = 0;
     }
    
-    public void Jump()
+    public void DoJump()
     {
-        jump = 1;
+        _jump = 1;
     }
     public void resetJump()
     {
-        jump = 0;
+        _jump = 0;
     }
 
-    public void Fire()
+    public void DoFire()
     {
-        fire = 1;
+        _fire = 1;
     }
 
     public void resetFire()
     {
-        fire = 0;
+        _fire = 0;
     }
 
 }

@@ -6,13 +6,12 @@ using UnityEngine;
 [RequireComponent(typeof(Animator))]
 public class EnemyController : MonoBehaviour
 {
-	public float health = 2;
 	
+	[SerializeField] private float health = 2;	
 	// atributy pohybu
-	public float walkingSpeed = 0.45f;
+	[SerializeField] private float walkingSpeed = 0.45f;
 	// atributy posmechu
-	public float timeToMock = 2f;
-	
+	[SerializeField] private float timeToMock = 2f;
 	
 	private bool walkingLeft = true;
 
@@ -21,9 +20,9 @@ public class EnemyController : MonoBehaviour
 	private float time = 0;
 
 	private SpriteMeshInstance[] BodyRenders;
+	
 	// objekt registrujici zasah kulkou hrace 
 	public EnemyDamageListener bulletCollisionListener = null;
-	
 	
 	// delegat registrujici smrt objektu enemy
 	public delegate void EnemyDeath(int addScore);
@@ -68,7 +67,7 @@ public class EnemyController : MonoBehaviour
 		enemyAnimator.SetTrigger("Death");
 		yield return new WaitForSeconds(0.5f);
 		// promenna uchovavajici dosavadni stav zabitych nepratel
-		GameManager.Instance.numberOfEnemiesDestroyed += 1;
+		GameManager.Instance.NumberOfEnemiesDestroyed += 1;
 		Destroy(gameObject);
 	}
 	

@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class DroneController : TrapController
 {
-
-	public float delay = 1f;
-	public float durationOfLaser = 0.5f;
-	public float chanceOfFire = 30f;
+	
+	[SerializeField] private float delay = 1f;
+	[SerializeField] private float durationOfLaser = 0.5f;
+	[SerializeField] private float chanceOfFire = 30f;
 	
 	private GameObject laser = null;
 	private bool laserActive = false;

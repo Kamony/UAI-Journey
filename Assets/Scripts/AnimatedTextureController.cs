@@ -1,16 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-//Apply to the mesh whose material's texture you're gonna change
-//Variable ammount of textures can be set, default is 1 
-//Single delay timing between textures for simpler inspector
-//you can make an array of delays, one for each texture if you really need that. 
-//or create some sort of "special delay" that overrides the default for certain textures. 
 public class AnimatedTextureController : MonoBehaviour
 {
-    public bool changeTextures = true;
-    public float Delay = 0.5f;
-    public Texture2D[] textures = new Texture2D[1];
+    [SerializeField] private bool changeTextures = true;
+    [SerializeField] private float Delay = 0.5f;
+    [SerializeField] private Texture2D[] textures = new Texture2D[1];
 
     void Start()
     {

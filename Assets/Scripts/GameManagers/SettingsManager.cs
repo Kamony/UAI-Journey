@@ -8,12 +8,13 @@ public class SettingsManager : MonoBehaviour
 
     private float volume = 1f;
 
-    public bool vibrations = true;
-    public bool music = true;
+    [SerializeField] private bool vibrations = true;
+    [SerializeField] private bool music = true;
    
     private void Awake()
     {
         Instance = this;
+        PlayerPrefs.SetInt("vibrations",1);   
     }
   
     public void changeMusicStat()
@@ -38,7 +39,11 @@ public class SettingsManager : MonoBehaviour
     public void changeVibrationsStat()
     {
         vibrations = !vibrations;
-        GameManager.Instance.vibrationEnabled = vibrations;
+        if (vibrations)
+            PlayerPrefs.SetInt("vibrations",1);    
+        else
+            PlayerPrefs.SetInt("vibrations",0);
+        
     }
    
 }

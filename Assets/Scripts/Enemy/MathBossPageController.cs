@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class MathBossPageController : MonoBehaviour
 {
-
-	public int Health = 2;
-	public GameObject pageDeathFX;
+	
+	[SerializeField] private int Health = 2;
+	[SerializeField] private GameObject pageDeathFX;
 
 	private void OnTriggerEnter2D(Collider2D other)
 	{

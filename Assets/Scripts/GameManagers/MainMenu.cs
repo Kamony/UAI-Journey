@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour
 {
-	public Button resumeButton;
+	[SerializeField] private Button resumeButton;
 
 	private GameManager _gm;
 
@@ -20,7 +20,7 @@ public class MainMenu : MonoBehaviour
 
 	public void ResumeGame()
 	{
-		if (GameManager.Instance.isSaved)
+		if (GameManager.Instance.IsSaved)
 		{
 			_gm.LoadPreservedGame();
 			Debug.Log("Loading preserved game");
@@ -48,7 +48,7 @@ public class MainMenu : MonoBehaviour
 	
 	private void Start()
 	{
-		if (File.Exists(Application.persistentDataPath + "/gameSave.dat") || GameManager.Instance.isSaved)
+		if (File.Exists(Application.persistentDataPath + "/gameSave.dat") || GameManager.Instance.IsSaved)
 		{
 			transform.GetChild(1).transform.position = new Vector3(transform.GetChild(1).transform.position.x -Screen.width/4, transform.GetChild(1).transform.position.y);
 			transform.GetChild(0).transform.position = new Vector3(transform.GetChild(0).transform.position.x +Screen.width/4, transform.GetChild(0).transform.position.y);

@@ -5,7 +5,7 @@ using UnityEngine;
 public class EnemyDamageListener : MonoBehaviour
 {
 
-    public Transform directionOfBeer;
+    [SerializeField] private Transform directionOfBeer;
     // delegat registrujici zasah kulkou
     
     public delegate void hitByPlayerBullet();

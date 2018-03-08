@@ -8,39 +8,34 @@ public class MathBossController : MonoBehaviour
 {
 
 	public delegate void bossEventHadnler(int score);
-
 	public static event bossEventHadnler bossDeath;
 	
 	public delegate void CameraTargerChange();
-
 	public static event CameraTargerChange onCameraTargetChange;
 
-	
 	private Camera2DFollow bossCameraTarget;
 	private Transform currTargetTransform;
 	private float numberOfTriggers = 0f;
 	
-	
-	public GameObject inActiveNode = null;
-	public GameObject dropToStartNode = null;
-	public GameObject dropFXSpawnPoint = null;
-	public List<GameObject> dropNodeList = new List<GameObject>();
+	[SerializeField] private GameObject inActiveNode = null;
+	[SerializeField] private GameObject dropToStartNode = null;
+	[SerializeField] private GameObject dropFXSpawnPoint = null;
+	[SerializeField] private List<GameObject> dropNodeList = new List<GameObject>();
 
-	public GameObject bossDeathFX = null;
-	public GameObject bossDropFX = null;
-	public GameObject Canvas;
+	[SerializeField] private GameObject bossDeathFX = null;
+	[SerializeField] private GameObject bossDropFX = null;
+	[SerializeField] private GameObject Canvas;
 
-
-	public GameObject portal = null;
+	[SerializeField] private GameObject portal = null;
 	
 	private Slider healthBar;
 
-	public float MoveSpeed = 0.1f;
-	public float eventWaitDelay = 3f;
+	[SerializeField] private float MoveSpeed = 0.1f;
+	[SerializeField] private float eventWaitDelay = 3f;
 
-	public int enemiesToStartBattle = 10;
+	[SerializeField] private int enemiesToStartBattle = 10;
 	
-	public enum bossEvents
+	private enum bossEvents
 	{
 		inactive = 0,
 		fallingToNode,
@@ -50,13 +45,13 @@ public class MathBossController : MonoBehaviour
 		
 	}
 
-	public bossEvents CurrEvent = bossEvents.inactive;
+	private bossEvents CurrEvent = bossEvents.inactive;
 
 	private GameObject targetNode = null;
 	private float timeForNextEvent = 0.0f;
 	private Vector3 targetPosition = Vector3.zero;
 
-	public int health = 20;
+	[SerializeField] private int health = 20;
 
 	private Animator animController;
 	private int startHealth = 20;
@@ -129,6 +124,7 @@ public class MathBossController : MonoBehaviour
 		}
 		portal.SetActive(true);
 		
+		Canvas.SetActive(false);
 		Destroy(gameObject);
 		
 	}

@@ -10,23 +10,33 @@ using UnityEngine.SceneManagement;
 [RequireComponent(typeof(Animator))]
 public class PlayerStateListener : MonoBehaviour {
     // upravitelne atributy pohybu hrace
-    public int playerHealth = 5;
-    public float playerWalkSpeed = 3f;
-    public float playerJumpForceVertical = 300f;
-    public float playerJumpForceHorizontal = 250f;
+    [SerializeField] private int playerHealth = 5;
+    public int PlayerHealth
+    {
+        get { return playerHealth; }
+    }
+    
+    [SerializeField] private float playerWalkSpeed = 3f;
+    [SerializeField] private float playerJumpForceVertical = 300f;
+    [SerializeField] private float playerJumpForceHorizontal = 250f;
 
-    public float fireDelay = 1f;
+    [SerializeField] private float fireDelay = 1f;
     // respawn point ktery se priradi v editoru
-    public GameObject playerRespawnPoint = null;
-    // bullet prefab ktery se priradi v editoru
-    public GameObject bulletPrefab = null;
-    // pocatecni bod odkud se bude strilet
-    public Transform bulletSpawnTransform;
+    [SerializeField] private GameObject playerRespawnPoint = null;
 
-    private Animator playerAnimator = null;
-    // predchozi stav hrace, aby se mel kam vratit pri strileni napr.
-    private PlayerStateController.playerStates previousState = PlayerStateController.playerStates.idle;
-    private PlayerStateController.playerStates currentState = PlayerStateController.playerStates.idle;
+    public GameObject PlayerRespawnPoint
+    {
+        get { return playerRespawnPoint; }
+    }
+    
+    // bullet prefab ktery se priradi v editoru
+    [SerializeField] private GameObject bulletPrefab = null;
+    // pocatecni bod odkud se bude strilet
+    [SerializeField] private Transform bulletSpawnTransform;
+
+    [SerializeField] private Animator playerAnimator = null;
+  
+    [SerializeField] private PlayerStateController.playerStates currentState = PlayerStateController.playerStates.idle;
     private bool playerHasLanded = true;
     private Rigidbody2D physics;
 
@@ -274,7 +284,7 @@ public class PlayerStateListener : MonoBehaviour {
                 break;
             case PlayerStateController.playerStates.takingDMG:
 #if UNITY_ANDROID
-                if (GameManager.Instance.vibrationEnabled)
+                if (PlayerPrefs.GetInt("vibrations") == 1)
                 {
                     Handheld.Vibrate();
                 }        
@@ -315,7 +325,7 @@ public class PlayerStateListener : MonoBehaviour {
                 PlayerBulletController bullCon = newBullet.GetComponent<PlayerBulletController>();
 
                 // priradime gameObject - player
-                bullCon.playerObject = gameObject;
+                bullCon.PlayerObject = gameObject;
 
                 // vypalime
                 bullCon.launchBullet();
@@ -328,11 +338,7 @@ public class PlayerStateListener : MonoBehaviour {
                 break;
             
         }
-
-        // ulozime predchozi stav
-        previousState = currentState;
-
-        // nastavime novy stav
+           // nastavime novy stav
         currentState = newState;
     }
 

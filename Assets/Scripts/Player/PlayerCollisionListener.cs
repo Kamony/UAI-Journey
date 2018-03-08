@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerCollisionListener : MonoBehaviour
 {
 
-	public PlayerStateListener targetStateListener = null;
+	[SerializeField] private PlayerStateListener targetStateListener = null;
 	
 	
 	public delegate void SceneChange();

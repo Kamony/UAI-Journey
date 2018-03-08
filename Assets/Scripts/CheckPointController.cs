@@ -5,14 +5,9 @@ using UnityEngine;
 public class CheckPointController : MonoBehaviour
 {
 	public delegate void CheckPointChange(GameObject newPosition);
-
 	public static event CheckPointChange onCheckpointChange;
 
-
-
 	private GameObject flag = null;
-
-
 	private float flagTravel = 0;
 
 	private void Awake()

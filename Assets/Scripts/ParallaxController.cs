@@ -1,9 +1,9 @@
 ﻿using UnityEngine; using System.Collections; 
 public class ParallaxController : MonoBehaviour 
 {
-	public Transform [] backgrounds; //Arrary (list) of all the back and foregrounds to be parrallaxed 
+	[SerializeField] private Transform [] backgrounds; //Arrary (list) of all the back and foregrounds to be parrallaxed 
 	private float[] parallaxScales; // The proportion of the camera's movement to move the backgrounds by 
-	public float smoothing = 1f; // how smooth the parallax is going to be. Make sure to set this above 0 
+	[SerializeField] private float smoothing = 1f; // how smooth the parallax is going to be. Make sure to set this above 0 
 	private Transform cam; //reference to the main cameras transform 
 	private Vector3 previousCamPos; //the position of the camera in teh previous frame 
 	

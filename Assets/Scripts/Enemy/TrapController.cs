@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class TrapController : MonoBehaviour
 {
-	public bool horizontal = false;
-	public float speed = 1f;
-	public float rotationAngle = 10f;
-	public Collider2D upBorder = null;
-	public Collider2D DownBorder = null;
+	[SerializeField] private bool horizontal = false;
+	[SerializeField] private float speed = 1f;
 	
-	public Transform sprite = null;
+	[SerializeField] private Collider2D upBorder = null;
+	[SerializeField] private Collider2D DownBorder = null;
+	
+
 	private bool isFalling = false;
 
 

@@ -2,22 +2,22 @@
     
     public class PauseMenu : MonoBehaviour
     {
-        public static bool gameIsPaused = false;
 
-        public GameObject pauseMenuUI;
+
+        [SerializeField] private GameObject pauseMenuUI;
 
         public void Pause()
         {
             Time.timeScale = 0f;
             pauseMenuUI.SetActive(true);
-            gameIsPaused = true;
+     
         }
 
         public void Resume()
         {
             Time.timeScale = 1f;
             pauseMenuUI.SetActive(false);
-            gameIsPaused = false;
+     
         }
 
         public void loadMainMenu()

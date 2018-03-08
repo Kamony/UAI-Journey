@@ -5,10 +5,10 @@ using UnityEngine;
 public class ScrollingBackGroud : MonoBehaviour
 {
 
-	public bool Parallax;
+	[SerializeField] private bool Parallax;
 	
-	public float backgroundSize;
-	public float paralaxSpeed;
+	[SerializeField] private float backgroundSize;
+	[SerializeField] private float paralaxSpeed;
 	
 	
 	private Transform cameraTransform;

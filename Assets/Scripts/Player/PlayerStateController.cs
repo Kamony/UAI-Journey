@@ -74,9 +74,9 @@ public class PlayerStateController : MonoBehaviour
 // pokud sme na desktopu, muzeme ovladat pohyb klavesnici
 
 #if UNITY_ANDROID
-        Move(TouchInput.movement);
-        Jump(TouchInput.jump);
-        Fire(TouchInput.fire);   
+        Move(TouchInput.Input.Movement);
+        Jump(TouchInput.Input.Jump);
+        Fire(TouchInput.Input.Fire);   
 #endif
      
 #if UNITY_STANDALONE

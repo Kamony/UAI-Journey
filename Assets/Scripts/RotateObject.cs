@@ -5,7 +5,7 @@ using UnityEngine;
 public class RotateObject : MonoBehaviour
 {
 
-	public float angle = 0f;
+	[SerializeField] private float angle = 0f;
 	
 	// Use this for initialization
 	void Start () {

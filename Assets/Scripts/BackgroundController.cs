@@ -4,14 +4,13 @@ using UnityEngine;
 
 public class BackgroundController : MonoBehaviour
 {
-	public float BackgroundSize;
-	public float ParallaxSpeed;
-	public bool Paralax, Scrolling;
+	[SerializeField] private float BackgroundSize;
+	[SerializeField] private float ParallaxSpeed;
+	[SerializeField] private bool Paralax, Scrolling;
 	
 	private Transform cameraTransform;
 	private Transform[] layers;
-	[SerializeField]
-	private float viewZone = 9;
+	[SerializeField] private float viewZone = 9;
 	private int leftIndex, rightIndex;
 
 	private float lastCameraX;
